@@ -7,7 +7,6 @@ public class TargetController : MonoBehaviour
     [SerializeField] private Target target;
     [field: SerializeField] public Transform TargetStart { get; private set; }
     [field: SerializeField] public float TargetMoveDownDist { get; private set; }
-    [field: SerializeField] public float TargetMoveRate { get; private set; }
 
     void Start()
     {

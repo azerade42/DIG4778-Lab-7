@@ -4,12 +4,14 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class Target : MonoBehaviour, IDamageable
 {
-    TargetController controller;
+    public event Action<int> OnTargetDestroyed;
+
     [HideInInspector] public int PointValue;
     [HideInInspector] public float Size;
     [HideInInspector] public float MoveSpeed;
     [HideInInspector] public Color SpriteColor;
 
+    private TargetController controller;
     private float maxXPos;
 
     private void Start()
