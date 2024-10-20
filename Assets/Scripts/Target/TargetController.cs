@@ -15,18 +15,18 @@ public class TargetController : MonoBehaviour
     private void OnEnable()
     {
         EventManager.OnGameEnded += StopSpawningTargets;
-        EventManager.OnGameRestarted += ResetTargets;
+        // EventManager.OnGameRestarted += ResetTargets;
     }
     private void OnDisable()
     {
         EventManager.OnGameEnded -= StopSpawningTargets;
-        EventManager.OnGameRestarted -= ResetTargets;
+        // EventManager.OnGameRestarted -= ResetTargets;
     }
 
     void Start()
     {
+        targetPool.InitalizePool(target, 40);
         spawnTargetsRoutine = StartCoroutine(SpawnRandomTargetSeries());
-        //targetPool.InitalizePool(Target, 10);
     }
 
     private IEnumerator SpawnRandomTargetSeries()
@@ -63,7 +63,7 @@ public class TargetController : MonoBehaviour
     private void SpawnTarget<T>() where T : TargetBuilder, new()
     {
         TargetBuilder targetBuilder = new T();
-        targetBuilder.Target = targetPool.GetObject(); // replace with Get() from object pool ???
+        targetBuilder.Target = targetPool.GetObject();
         targetBuilder.Target.Init(this);
         targetBuilder.Construct();
         targetBuilder.Target.transform.position = TargetStart.position;
@@ -76,10 +76,10 @@ public class TargetController : MonoBehaviour
         StopCoroutine(spawnTargetsRoutine);
     }
 
-    private void ResetTargets()
-    {
-        // clear object pool
-    }
+    // private void ResetTargets()
+    // {
+    //     // clear object pool
+    // }
 
     public void Release(Target obj)
     {
