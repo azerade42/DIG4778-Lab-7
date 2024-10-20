@@ -1,23 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private PlayerController player;
-
-    private void Start()
+    private void OnEnable()
     {
-        StartGame();
+        EventManager.OnPlayerDied += RestartGame;
     }
 
-    private void StartGame()
+    private void OnDisable()
     {
-        player.OnPlayerDied += EndGame;
+        EventManager.OnPlayerDied -= RestartGame;
     }
 
-    private void EndGame()
+    private void RestartGame()
     {
-        player.OnPlayerDied -= EndGame;
+        EventManager.GameRestarted();
     }
 }

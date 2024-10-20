@@ -15,7 +15,7 @@ public class TargetController : MonoBehaviour
 
     private IEnumerator SpawnRandomTargetSeries()
     {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++) // replace with 60 sec timer??
         {
             yield return StartCoroutine(SpawnRandomTargets());
         }
@@ -52,5 +52,7 @@ public class TargetController : MonoBehaviour
         targetBuilder.Construct();
         targetBuilder.Target.transform.position = TargetStart.position;
     }
+
+    public void TargetHit(Target target) => EventManager.TargetDestroyed(target);
 
 }

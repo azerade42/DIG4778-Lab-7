@@ -4,8 +4,6 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class Target : MonoBehaviour, IDamageable
 {
-    public event Action<int> OnTargetDestroyed;
-
     [HideInInspector] public int PointValue;
     [HideInInspector] public float Size;
     [HideInInspector] public float MoveSpeed;
@@ -45,6 +43,7 @@ public class Target : MonoBehaviour, IDamageable
     {
         // give the player points
         Destroy(gameObject);
+        controller.TargetHit(this);
     }
 
     public void MissTarget()

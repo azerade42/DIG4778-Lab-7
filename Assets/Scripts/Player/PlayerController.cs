@@ -6,9 +6,6 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerInputController), typeof(ProjectileSpawner))]
 public class PlayerController : MonoBehaviour, IDamageable
 {
-    // Events
-    public Action OnPlayerDied;
-
     // Movement
     [SerializeField] private float moveSpeed;
     [SerializeField] private float moveBoundsX;
@@ -60,7 +57,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         if (--lives <= 0)
         {
-            OnPlayerDied?.Invoke();
+            EventManager.PlayerDied();
         }
     }
 }
