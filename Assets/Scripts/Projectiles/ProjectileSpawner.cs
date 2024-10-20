@@ -6,9 +6,14 @@ public class ProjectileSpawner : MonoBehaviour
 {
     [SerializeField] Projectile projectileToSpawn; // replace with object pool
     [SerializeField] Vector3 spawnOffset;
+     private ObjectPool<Projectile> projPool = new ObjectPool<Projectile>();
 
     private bool onCooldown;
 
+    private void Start()
+    {
+        projPool.InitalizePool(projectileToSpawn, 10);
+    }
     private void OnDisable()
     {
         StopAllCoroutines();
@@ -17,17 +22,26 @@ public class ProjectileSpawner : MonoBehaviour
     public void SpawnProjectile(Vector2 moveDir, float cooldownTime)
     {
         if (onCooldown) return;
+        
+        Projectile proj = projPool.GetObject();
+        if(proj == null) return;
+        else
+        {
+            
+            proj.gameObject.transform.position = transform.position + spawnOffset;
+            //Projectile projectile = Instantiate(projectileToSpawn, transform.position + spawnOffset, Quaternion.identity).GetComponent<Projectile>(); // replace with Get() object pool
+            proj.Init(moveDir, this);
 
-        Projectile projectile = Instantiate(projectileToSpawn, transform.position + spawnOffset, Quaternion.identity).GetComponent<Projectile>(); // replace with Get() object pool
-        projectile.Init(moveDir);
+            StartCoroutine(Countdown(cooldownTime, null));
+        }
 
-        StartCoroutine(Countdown(cooldownTime, null));
     }
 
     private void SpawnProjectileRepeating(Vector2 moveDir, float repeatRate)
     {
+        print("why am i being called");
         Projectile projectile = Instantiate(projectileToSpawn, transform.position + spawnOffset, Quaternion.identity).GetComponent<Projectile>(); // replace with Get() object pool
-        projectile.Init(moveDir);
+        projectile.Init(moveDir, this);
 
         StartCoroutine(Countdown(repeatRate, () => SpawnProjectileRepeating(moveDir, repeatRate)));
     }
@@ -40,6 +54,11 @@ public class ProjectileSpawner : MonoBehaviour
         endAction?.Invoke();
 
         onCooldown = false;
+    }
+
+    public void Release(Projectile obj)
+    {
+        projPool.ReturnObject(obj);
     }
 
 }

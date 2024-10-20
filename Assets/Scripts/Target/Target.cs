@@ -60,13 +60,13 @@ public class Target : MonoBehaviour, IDamageable
     public virtual void TakeDamage()
     {
         // give the player points
-        Destroy(gameObject);
+        controller.Release(this);
         controller.TargetHit(this);
     }
 
     public void MissTarget()
     {
         EventManager.TargetMissed(this);
-        Destroy(gameObject); // replace with Release() from object pool
+        controller.Release(this); // replace with Release() from object pool
     }
 }

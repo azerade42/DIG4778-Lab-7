@@ -114,7 +114,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 12
   moveBoundsX: 8.5
-  shootCooldown: 0.1
+  shootCooldown: 0.5
+  startingLives: 0
 --- !u!114 &6748949645519046915
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,7 +137,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 815221808505361060}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:

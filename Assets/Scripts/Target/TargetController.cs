@@ -10,6 +10,8 @@ public class TargetController : MonoBehaviour
 
     private Coroutine spawnTargetsRoutine;
 
+    private ObjectPool<Target> targetPool = new ObjectPool<Target>();
+
     private void OnEnable()
     {
         EventManager.OnGameEnded += StopSpawningTargets;
@@ -24,6 +26,7 @@ public class TargetController : MonoBehaviour
     void Start()
     {
         spawnTargetsRoutine = StartCoroutine(SpawnRandomTargetSeries());
+        //targetPool.InitalizePool(Target, 10);
     }
 
     private IEnumerator SpawnRandomTargetSeries()
@@ -60,7 +63,7 @@ public class TargetController : MonoBehaviour
     private void SpawnTarget<T>() where T : TargetBuilder, new()
     {
         TargetBuilder targetBuilder = new T();
-        targetBuilder.Target = Instantiate(target); // replace with Get() from object pool ???
+        targetBuilder.Target = targetPool.GetObject(); // replace with Get() from object pool ???
         targetBuilder.Target.Init(this);
         targetBuilder.Construct();
         targetBuilder.Target.transform.position = TargetStart.position;
@@ -76,6 +79,11 @@ public class TargetController : MonoBehaviour
     private void ResetTargets()
     {
         // clear object pool
+    }
+
+    public void Release(Target obj)
+    {
+        targetPool.ReturnObject(obj);
     }
 
 }
