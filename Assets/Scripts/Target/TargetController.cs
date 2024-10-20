@@ -8,14 +8,27 @@ public class TargetController : MonoBehaviour
     [field: SerializeField] public Transform TargetStart { get; private set; }
     [field: SerializeField] public float TargetMoveDownDist { get; private set; }
 
+    private Coroutine spawnTargetsRoutine;
+
+    private void OnEnable()
+    {
+        EventManager.OnGameEnded += StopSpawningTargets;
+        EventManager.OnGameRestarted += ResetTargets;
+    }
+    private void OnDisable()
+    {
+        EventManager.OnGameEnded -= StopSpawningTargets;
+        EventManager.OnGameRestarted -= ResetTargets;
+    }
+
     void Start()
     {
-        StartCoroutine(SpawnRandomTargetSeries());
+        spawnTargetsRoutine = StartCoroutine(SpawnRandomTargetSeries());
     }
 
     private IEnumerator SpawnRandomTargetSeries()
     {
-        for (int i = 0; i < 5; i++) // replace with 60 sec timer??
+        while (true)
         {
             yield return StartCoroutine(SpawnRandomTargets());
         }
@@ -23,7 +36,7 @@ public class TargetController : MonoBehaviour
 
     private IEnumerator SpawnRandomTargets()
     {
-        int numTargets = UnityEngine.Random.Range(1, 11);
+        int numTargets = UnityEngine.Random.Range(1, 3);
 
         if (UnityEngine.Random.Range(0,2) < 1)
         {
@@ -53,6 +66,16 @@ public class TargetController : MonoBehaviour
         targetBuilder.Target.transform.position = TargetStart.position;
     }
 
-    public void TargetHit(Target target) => EventManager.TargetDestroyed(target);
+    public void TargetHit(Target target) => EventManager.TargetHit(target);
+
+    private void StopSpawningTargets()
+    {
+        StopCoroutine(spawnTargetsRoutine);
+    }
+
+    private void ResetTargets()
+    {
+        // clear object pool
+    }
 
 }

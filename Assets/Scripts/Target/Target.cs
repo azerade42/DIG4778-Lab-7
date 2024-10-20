@@ -12,6 +12,20 @@ public class Target : MonoBehaviour, IDamageable
     private TargetController controller;
     private float maxXPos;
 
+    private bool canMove = true;
+
+    private void OnEnable()
+    {
+        EventManager.OnGameEnded += ToggleMovement;
+        EventManager.OnGameRestarted += ToggleMovement;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnGameEnded -= ToggleMovement;
+        EventManager.OnGameRestarted -= ToggleMovement;
+    }
+
     private void Start()
     {
         transform.localScale *= Size;
@@ -24,8 +38,12 @@ public class Target : MonoBehaviour, IDamageable
         maxXPos = Mathf.Abs(controller.TargetStart.position.x);
     }
 
+    private void ToggleMovement() => canMove = !canMove;
+
     private void FixedUpdate()
     {
+        if (!canMove) return;
+
         transform.Translate(Vector3.right * MoveSpeed * Time.deltaTime);
 
         // Move target down and flip its movement if offscreen
@@ -48,6 +66,7 @@ public class Target : MonoBehaviour, IDamageable
 
     public void MissTarget()
     {
+        EventManager.TargetMissed(this);
         Destroy(gameObject); // replace with Release() from object pool
     }
 }

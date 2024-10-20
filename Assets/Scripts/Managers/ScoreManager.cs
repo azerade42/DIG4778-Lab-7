@@ -9,20 +9,29 @@ public class ScoreManager : MonoBehaviour
     private void OnEnable()
     {
         EventManager.OnTargetHit += AddTargetToScore;
-        EventManager.OnPlayerDied += ResetScore;
+        EventManager.OnGameRestarted += ResetScore;
     }
 
     private void OnDisable()
     {
         EventManager.OnTargetHit -= AddTargetToScore;
-        EventManager.OnPlayerDied -= ResetScore;
+        EventManager.OnGameRestarted -= ResetScore;
     }
 
     private void AddTargetToScore(Target target)
     {
         CurrentScore += target.PointValue;
+        EventManager.ScoreUpdated(CurrentScore);
     }
 
-    private void ResetScore() => CurrentScore = 0;
+    private void Start()
+    {
+        ResetScore();
+    }
 
+    private void ResetScore()
+    {
+        CurrentScore = 0;
+        EventManager.ScoreUpdated(CurrentScore);
+    }
 }
