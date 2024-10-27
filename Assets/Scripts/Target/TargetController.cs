@@ -18,6 +18,8 @@ public class TargetController : MonoBehaviour, ISaveable
     {
         EventManager.OnGameEnded += StopSpawningTargets;
         // EventManager.OnGameRestarted += ResetTargets;
+
+        SaveManager.Instance.SaveableObjects.Add(this);
     }
     private void OnDisable()
     {
@@ -62,13 +64,14 @@ public class TargetController : MonoBehaviour, ISaveable
         }
     }
 
-    private void SpawnTarget<T>() where T : TargetBuilder, new()
+    private TargetBuilder SpawnTarget<T>() where T : TargetBuilder, new()
     {
         TargetBuilder targetBuilder = new T();
         targetBuilder.Target = targetPool.GetObject();
         targetBuilder.Target.Init(this);
         targetBuilder.Construct();
         targetBuilder.Target.transform.position = TargetStart.position;
+        return targetBuilder;
     }
 
     public void TargetHit(Target target) => EventManager.TargetHit(target);
@@ -85,18 +88,25 @@ public class TargetController : MonoBehaviour, ISaveable
 
     public void SaveData()
     {
-        List<Target> targets = SaveManager.Instance.SaveData.Targets;
-        targets.Clear();
+        SaveManager.SaveData.Targets = new List<Vector3>();      
 
-        foreach (Target target in targetPool.Pool)
+        foreach (Target target in targetPool.ActivePool)
         {
-            targets.Add(target);
+            print(target.transform.position);
+            SaveManager.SaveData.Targets.Add(target.transform.position);
         }
     }
 
     public void LoadData()
     {
-        
+        targetPool.ReturnAllObjects();
+        targetPool.InitalizePool(target, 40);
+
+        foreach (Vector3 pos in SaveManager.SaveData.Targets)
+        {
+            Target target = SpawnTarget<RedTarget>().Target;
+            target.transform.position = pos;
+        }
     }
 
 }

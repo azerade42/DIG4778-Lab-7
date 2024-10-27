@@ -4,15 +4,15 @@ using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
 using System;
+using System.Linq;
 
 public class SaveManager : MonoBehaviour
 {
-
     public static SaveManager Instance;
-    public SaveData SaveData;
+    public List<ISaveable> SaveableObjects = new List<ISaveable>();
+    public static SaveData SaveData;
 
     private string dataFileName = "data.json";
-    private List<ISaveable> savedBehaviors = new List<ISaveable>();
 
     private void Awake()
     {
@@ -20,43 +20,52 @@ public class SaveManager : MonoBehaviour
             Instance = this;
         else
             Destroy(this);
-
     }
 
     private void OnEnable()
     {
-        Load();
-    }
-
-    private void OnDisable()
-    {
-        
-
-        Save();
+        LoadFromFile();
     }
 
     private void Start()
     {
-        foreach (ISaveable savedBehavior in savedBehaviors)
+        foreach (ISaveable saveable in SaveableObjects)
         {
-            savedBehavior.LoadData();
+            saveable.LoadData();
         }
     }
 
-    public void AddToSavedBehaviors(ISaveable savedBehavior) => savedBehaviors.Add(savedBehavior);
-
-    public void Save()
+    public void Update()
     {
-        foreach (ISaveable savedBehavior in savedBehaviors)
+        if (Input.GetKeyDown(KeyCode.S))
         {
-            savedBehavior.SaveData();
+            foreach (ISaveable saveable in SaveableObjects)
+            {
+                saveable.SaveData();
+            }
+            SaveToFile();
         }
-        
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            LoadFromFile();
+            foreach (ISaveable saveable in SaveableObjects)
+            {
+                saveable.LoadData();
+            }
+        }
+    }
+
+    public void SaveToFile()
+    {
         string filePath = Path.Combine(Application.persistentDataPath, dataFileName);
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-            string jsonSaveData = JsonConvert.SerializeObject(SaveData);
+            var settings = new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
+            string jsonSaveData = JsonConvert.SerializeObject(SaveData, settings);
 
             using (FileStream stream = new FileStream(filePath, FileMode.Create))
             {
@@ -71,7 +80,8 @@ public class SaveManager : MonoBehaviour
             Debug.LogError($"Exception while saving data to file: {filePath}\n{e}");
         }
     }
-    public void Load()
+
+    public void LoadFromFile()
     {
         string filePath = Path.Combine(Application.persistentDataPath, dataFileName);
 

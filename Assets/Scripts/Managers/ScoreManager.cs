@@ -11,7 +11,7 @@ public class ScoreManager : MonoBehaviour, ISaveable
         EventManager.OnTargetHit += AddTargetToScore;
         EventManager.OnGameRestarted += ResetScore;
 
-        SaveManager.Instance.AddToSavedBehaviors(this);
+        SaveManager.Instance.SaveableObjects.Add(this);
     }
 
     private void OnDisable()
@@ -22,12 +22,12 @@ public class ScoreManager : MonoBehaviour, ISaveable
 
     public void SaveData()
     {
-        SaveManager.Instance.SaveData.Score = CurrentScore;
+        SaveManager.SaveData.Score = CurrentScore;
     }
 
     public void LoadData()
     {
-        CurrentScore = SaveManager.Instance.SaveData.Score;
+        CurrentScore = SaveManager.SaveData.Score;
         EventManager.ScoreUpdated(CurrentScore);
     }
 

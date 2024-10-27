@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
-public struct SaveData
+public class SaveData
 {
     public int Score;
-    public Vector3 PlayerPosition;
-    public List<Target> Targets;
+    public float PlayerPositionX;
+    public List<Vector3> Targets = new List<Vector3>();
 }

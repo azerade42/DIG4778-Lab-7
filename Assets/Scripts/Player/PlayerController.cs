@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISaveable
     [SerializeField] private float moveBoundsX;
 
     private float moveDir;
-    private float startYPos;
+    private float startYPos = -4.5f;
 
     // Shooting
     private ProjectileSpawner projectileSpawner;
@@ -34,6 +34,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISaveable
         projectileSpawner = GetComponent<ProjectileSpawner>();
 
         EventManager.OnTargetMiss += DamageOnMiss;
+
+        SaveManager.Instance.SaveableObjects.Add(this);
     }
 
     private void OnDisable()
@@ -49,19 +51,18 @@ public class PlayerController : MonoBehaviour, IDamageable, ISaveable
 
     private void Start()
     {
-        startYPos = transform.position.y;
         lives = startingLives;
         EventManager.PlayerLivesUpdated(lives);
     }
 
     public void SaveData()
     {
-        SaveManager.Instance.SaveData.PlayerPosition = transform.position;
+        SaveManager.SaveData.PlayerPositionX = transform.position.x;
     }
 
     public void LoadData()
     {
-        transform.position = SaveManager.Instance.SaveData.PlayerPosition;
+        transform.position = new Vector3(SaveManager.SaveData.PlayerPositionX, startYPos, 0);
     }
 
     private void FixedUpdate()

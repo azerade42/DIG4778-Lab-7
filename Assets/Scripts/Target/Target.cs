@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 
+[System.Serializable]
 [RequireComponent(typeof(Collider2D))]
 public class Target : MonoBehaviour, IDamageable
 {
@@ -18,6 +19,7 @@ public class Target : MonoBehaviour, IDamageable
     {
         EventManager.OnGameEnded += ToggleMovement;
         EventManager.OnGameRestarted += ToggleMovement;
+
     }
 
     private void OnDisable()
