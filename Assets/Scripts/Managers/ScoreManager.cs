@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScoreManager : MonoBehaviour
+public class ScoreManager : MonoBehaviour, ISaveable
 {
     public int CurrentScore { get; private set; }
 
@@ -10,6 +10,8 @@ public class ScoreManager : MonoBehaviour
     {
         EventManager.OnTargetHit += AddTargetToScore;
         EventManager.OnGameRestarted += ResetScore;
+
+        SaveManager.Instance.AddToSavedBehaviors(this);
     }
 
     private void OnDisable()
@@ -18,15 +20,21 @@ public class ScoreManager : MonoBehaviour
         EventManager.OnGameRestarted -= ResetScore;
     }
 
+    public void SaveData()
+    {
+        SaveManager.Instance.SaveData.Score = CurrentScore;
+    }
+
+    public void LoadData()
+    {
+        CurrentScore = SaveManager.Instance.SaveData.Score;
+        EventManager.ScoreUpdated(CurrentScore);
+    }
+
     private void AddTargetToScore(Target target)
     {
         CurrentScore += target.PointValue;
         EventManager.ScoreUpdated(CurrentScore);
-    }
-
-    private void Start()
-    {
-        ResetScore();
     }
 
     private void ResetScore()

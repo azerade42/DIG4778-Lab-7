@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerInputController), typeof(ProjectileSpawner))]
-public class PlayerController : MonoBehaviour, IDamageable
+public class PlayerController : MonoBehaviour, IDamageable, ISaveable
 {
     private PlayerInputController inputController;
 
@@ -52,6 +52,16 @@ public class PlayerController : MonoBehaviour, IDamageable
         startYPos = transform.position.y;
         lives = startingLives;
         EventManager.PlayerLivesUpdated(lives);
+    }
+
+    public void SaveData()
+    {
+        SaveManager.Instance.SaveData.PlayerPosition = transform.position;
+    }
+
+    public void LoadData()
+    {
+        transform.position = SaveManager.Instance.SaveData.PlayerPosition;
     }
 
     private void FixedUpdate()

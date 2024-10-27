@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
-public class TargetController : MonoBehaviour
+public class TargetController : MonoBehaviour, ISaveable
 {
     [SerializeField] private Target target;
     [field: SerializeField] public Transform TargetStart { get; private set; }
@@ -76,14 +78,25 @@ public class TargetController : MonoBehaviour
         StopCoroutine(spawnTargetsRoutine);
     }
 
-    // private void ResetTargets()
-    // {
-    //     // clear object pool
-    // }
-
     public void Release(Target obj)
     {
         targetPool.ReturnObject(obj);
+    }
+
+    public void SaveData()
+    {
+        List<Target> targets = SaveManager.Instance.SaveData.Targets;
+        targets.Clear();
+
+        foreach (Target target in targetPool.Pool)
+        {
+            targets.Add(target);
+        }
+    }
+
+    public void LoadData()
+    {
+        
     }
 
 }
